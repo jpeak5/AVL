@@ -21,13 +21,13 @@ public class AVL {
 					newHeight = false;
 					target.bf = 0;
 
-				} else if (target.bf == -1) {
-					newHeight = true;
+				} else if (target.bf == -1) {//target is already heavy on the right side, so we will be increasing the height
+					newHeight = true;//this should demand a left rotation
 					System.out.println("Left Rotation needed");
 				} else if (target.bf == 0) {// single left-rotation
-					System.out.println("Rotation needed, left");
-					newHeight = true;
-					target.bf = -1;
+					System.out.println("previously balanced subtree is now right-heavy");
+					newHeight = true;//the height of this subtree has just increased by 1, which is fine unless it pushes ancestors' heights over 1
+//					target.bf = -1;
 
 					// walk straight up the tree incrementing the heights of the
 					// ancestors
@@ -47,10 +47,10 @@ public class AVL {
 					}// end ancestor walk
 
 					// set the value of the root.height
-					int rRT = (root.right == null) ? -1 : root.right.height; 
-					int rLF = (root.left == null) ? -1 : root.left.height;
-					root.bf = rLF - rRT;
-					root.height = Math.max(rRT, rLF) + 1;
+					int rRT = (root.right == null) ? -1 : root.right.height; //check null
+					int rLF = (root.left == null) ? -1 : root.left.height; //check null
+					root.bf = rLF - rRT; //set balance factor for root
+					root.height = Math.max(rRT, rLF) + 1;//set height for root
 					// end set root value
 				}
 
