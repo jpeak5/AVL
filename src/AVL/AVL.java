@@ -5,7 +5,8 @@ public class AVL {
 	public Node root;
 
 	public void insert(Node node, Node target) {
-		boolean newHeight = false;
+		boolean newHeight = false;// the global flag that marks when height has
+									// changed
 		if (root == null) {
 			root = node;
 			node.bf = 0;
@@ -14,29 +15,43 @@ public class AVL {
 				insert(node, target.right);// recurse
 			} else {// space available
 				target.right = node;
-				node.bf = 0;
 				node.parent = target;
-				if(node.parent.bf==0){
-					node.parent.bf=-1;
-					newHeight=true;
-				}else if(node.parent.bf==-1){
-					lRotate(node);
-				}else if(node.parent.bf==1){
-					node.parent.bf =0;
+				node.bf = 0;// initial BF will be 0
+				if (target.bf == -1) {
+					newHeight = false;
+					target.bf = 0;
+				} else if (target.bf == 0) {// single left-rotation
+					System.out.println("Rotation needed, maybe");
+					newHeight = true;
+					target.bf = 1;
+
+					Node x = target;
+					while (x != root) {//walk straight up the tree incrementing the heights of the ancestors
+						x.height++;
+						x = x.parent;
+					}
+					//set the value of the root.height
+					int rtRight = 0;
+					int rtLeft = 0;
+					if (root.right != null) {
+						rtRight = root.right.height;
+					}
+					if (root.left != null) {
+						rtLeft = root.left.height;
+					}
+					root.height = Math.max(rtRight, rtLeft) + 1;
+					//end set root value
 				}
-				if(newHeight=true){
-					lRotate(node.parent.parent);
-				}
+
 			}
 		} else {
 			if (target.left != null) {
 				insert(node, target.left);
-
 			} else {
 				target.left = node;
-				// node.bf = 0;
+				node.bf = 0;// initial BF will be 0
 				node.parent = target;
-				// node.bf++;
+
 			}
 		}
 	}
@@ -63,10 +78,11 @@ public class AVL {
 			inorder(node.left);
 		}
 		System.out.print(node.key + "(bf: " + node.bf + ")");
-		if(node.left!=null)
+		if (node.left != null)
 			System.out.print("(left: " + node.left.key + ")");
-		if(node.right!=null)
+		if (node.right != null)
 			System.out.print("(right: " + node.right.key + ")");
+		System.out.print("(height: " + node.height + ")");
 		System.out.print("\n");
 		if (node.right != null) {
 			inorder(node.right);
@@ -123,12 +139,12 @@ public class AVL {
 		}
 	}
 
-	//	
+	//
 	// public void select(){
-	//		
+	//
 	// }
 	// public void rank(){
-	//		
+	//
 	// }
 
 	private void transplant(Node oroot, Node nroot) {
