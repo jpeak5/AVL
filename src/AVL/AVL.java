@@ -17,30 +17,41 @@ public class AVL {
 				target.right = node;
 				node.parent = target;
 				node.bf = 0;// initial BF will be 0
-				if (target.bf == -1) {
+				if (target.bf == 1) {
 					newHeight = false;
 					target.bf = 0;
-				} else if (target.bf == 0) {// single left-rotation
-					System.out.println("Rotation needed, maybe");
+
+				} else if (target.bf == -1) {
 					newHeight = true;
-					target.bf = 1;
+					System.out.println("Left Rotation needed");
+				} else if (target.bf == 0) {// single left-rotation
+					System.out.println("Rotation needed, left");
+					newHeight = true;
+					target.bf = -1;
+
+					// walk straight up the tree incrementing the heights of the
+					// ancestors
 
 					Node x = target;
-					while (x != root) {//walk straight up the tree incrementing the heights of the ancestors
+
+					while (x != root && x != null) {
 						x.height++;
+						int xRT = (x.right == null) ? -1 : x.right.height;
+						int xLF = (x.left == null) ? -1 : x.left.height;
+						x.bf = xLF - xRT;
+						if(x.bf>=Math.abs(2)){
+							System.out.println("OMG, rotate");
+						}
 						x = x.parent;
-					}
-					//set the value of the root.height
-					int rtRight = 0;
-					int rtLeft = 0;
-					if (root.right != null) {
-						rtRight = root.right.height;
-					}
-					if (root.left != null) {
-						rtLeft = root.left.height;
-					}
-					root.height = Math.max(rtRight, rtLeft) + 1;
-					//end set root value
+
+					}// end ancestor walk
+
+					// set the value of the root.height
+					int rRT = (root.right == null) ? -1 : root.right.height; 
+					int rLF = (root.left == null) ? -1 : root.left.height;
+					root.bf = rLF - rRT;
+					root.height = Math.max(rRT, rLF) + 1;
+					// end set root value
 				}
 
 			}

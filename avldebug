@@ -1,8 +1,10 @@
-IN 1
+IN 5
 TR
-IN 2
+IN 10
 TR
-IN 3
+IN 15
+TR
+IN 20
 PR 3
 SC 2
 PR 2
