@@ -143,11 +143,15 @@ public class AVL {
 		Node node = get(root, key);
 		if (node.left != null) {// go down and right
 			return max(node.left);
-		} else if (node.parent.right == node) {// look up and left
-			return node.parent;
-		} else {
-			return predecessor(node.parent.key);
+		} else if (node.parent!=null){
+			if(node.parent.right == node) {// look up and left
+				return node.parent;
 		}
+			else {
+				return predecessor(node.parent.key);
+			}
+		} 
+		return node=null;
 	}
 
 	//

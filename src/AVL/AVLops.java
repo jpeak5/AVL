@@ -40,7 +40,12 @@ public class AVLops {
 							System.out.println("Error: no such key, hence, no successor");
 						}
 						else{
-							System.out.println(avl.predecessor(key).key+"     //PR "+ key);
+							Node p = avl.predecessor(key);
+							if(p!=null){
+								System.out.println(avl.predecessor(key).key+"     //PR "+ key);
+							}else{
+								System.out.println("ERROR: Searching for predecessor to min     //PR "+ key);
+							}
 						}
 					}else if(cmd.equals("SR")){//search
 						System.out.println(avl.search(avl.root, key)+"     //SR "+key);
