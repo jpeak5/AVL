@@ -10,16 +10,22 @@ public class AVL {
 		if (root == null) {
 			root = node;
 			node.bf = 0;
-		} else if (node.key > target.key) {// go right
-			if (target.right != null) {
-				insert(node, target.right);// recurse
-			} else {// space available
+		} else if (node.key > target.key) {// is the node to insert bigger than the target? go right
+			if (target.right != null) {//is there already a child on the right of the target?
+				insert(node, target.right);//retry the insertion on target's right child
+			} else {//there is space available for us to insert, perform all actions required to complete insertion
 				target.right = node;
 				node.parent = target;
-				node.bf = 0;// initial BF will be 0
-				if (target.bf == 1) {
-					newHeight = false;
-					target.bf = 0;
+				node.bf = 0;// initial BF will be 0 for any new node
+				
+				/*
+				 * now we need to determine how or if target  
+				 * (aka the parent of the node just inserted) 
+				 * balance factor should be updated and what should happen as a result
+				 */
+				if (target.bf == 1) {//left-heavy subtree
+					newHeight = false;//since we are adding to the right, we are correcting the existing imbalance
+					target.bf = 0;//with that done, the balance factor of the root of this subtree is now neutral
 
 				} else if (target.bf == -1) {//target is already heavy on the right side, so we will be increasing the height
 					newHeight = true;//this should demand a left rotation
