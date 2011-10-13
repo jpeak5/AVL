@@ -8,11 +8,8 @@ public class AVL {
 	// has
 
 	public void insert(Node node, Node target) {
-		if (root == null) {
-			root = node;
-			node.bf = 0;
-			node.height = 0;
-		} else {
+		if (root != null) {
+
 			if (node.key > target.key) {
 				/*
 				 * is the node to insert bigger than the target? go right
@@ -106,42 +103,42 @@ public class AVL {
 					System.out.println("Left Rotation needed");
 
 				} else if (target.bf == 0) {// single left-rotation
-
 					System.out.println("Case 6, bf = 0 => 1");
-					newHeight = true;
 					/*
 					 * the height of this subtree has just increased by 1, which
 					 * is fine unless it pushes ancestors' heights over 1
 					 */
-
+					newHeight = true;
 				}
 			}
 			if (newHeight = true) {
 				adjustBalanceFactors(target);
 			}
 
+		} else {
+			root = node;
+			node.bf = 0;
+			node.height = 0;
 		}
 	}
 
 	public void adjustBalanceFactors(Node x) {
 		if (newHeight = true) {
-			/*
-			 * walk straight up the tree incrementing the heights and checking
-			 * balance factors of the ancestors
-			 */
 			int xRT = (x.right == null) ? -1 : x.right.height;
 			int xLF = (x.left == null) ? -1 : x.left.height;
 			x.bf = xLF - xRT;
 			x.height = (Math.max(xLF, xRT) + 1);
+
 			if (Math.abs(x.bf) == 1 && x.parent != null) {
+				/*
+				 * walk straight up the tree incrementing the heights and
+				 * checking balance factors of the ancestors
+				 */
 				adjustBalanceFactors(x.parent);
 			}
 			if (Math.abs(x.bf) == 2) {
 				x = doRotations(x);
 			}
-			// if (newHeight == true) {
-			// x = x.parent;
-			// }
 
 		}
 
@@ -151,20 +148,35 @@ public class AVL {
 		// determine which subtree is tallest
 		if (x.bf < 0) {// negative, so we are looking at the right subtree
 			System.out.println("rotate LL on the right side");
-			if (x.right.bf < 0) {// Left Left rotation
-				if (x != root) {
-					x.right.parent = x.parent;
-				} else {
-					x.right = root;
-				}
-				if (x.right.left != null) {
-					x.right.left.parent = x;
-					x.right = x.right.left;
-					x.height = x.height - 2;
-				}
-				newHeight = false;
+			rotateLeftLeft(x);
+		}
+		return x;
+	}
 
+	public Node rotateLeftLeft(Node x) {
+		if (x.right.bf < 0) {// Left Left rotation
+			Node y = x.right;
+			if (y.left != null) {
+				x.right = y.left;
+				y.left.parent = x;
+				y.left = null;
+				
 			}
+			if (x != root) {
+				y.parent = x.parent;
+			} else {
+				root = y;
+				y.parent = null;
+			}
+			x.parent =y;
+			y.left=x;
+			x.right=null;
+			x.height = x.height - 2;
+			System.out.println("Rotating node "+x.key+" left");
+			newHeight = false;
+			adjustBalanceFactors(x);
+			adjustBalanceFactors(y);
+			return y;
 		}
 		return x;
 	}
