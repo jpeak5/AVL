@@ -3,26 +3,29 @@ package AVL;
 public class AVL {
 
 	public Node root;
+	public boolean newHeight = false;// the global flag that marks when height
+
+	// has
 
 	public void insert(Node node, Node target) {
-		boolean newHeight = false;// the global flag that marks when height has
-		// changed
 		if (root == null) {
 			root = node;
 			node.bf = 0;
 			node.height = 0;
 		} else {
-			if (node.key > target.key) {// is the node to insert bigger than
-
-				// the target? go right
-				if (target.right != null) {// is there already a child on the
-											// right
-					// of the target?
+			if (node.key > target.key) {
+				/*
+				 * is the node to insert bigger than the target? go right
+				 */
+				if (target.right != null) {
+					/*
+					 * is there already a child on the right of the target?
+					 */
 					insert(node, target.right);// retry the insertion on
-												// target's
+					// target's
 					// right child
 				} else {// there is space available for us to insert, perform
-						// all
+					// all
 					// actions required to complete insertion
 					target.right = node;
 					node.parent = target;
@@ -38,9 +41,8 @@ public class AVL {
 						newHeight = false;
 						/*
 						 * since we are adding to the right, we are correcting
-						 * the existing imbalance with that done, the balance
-						 * factor of the root of this subtree will be now
-						 * neutral
+						 * the existing imbalance; with that done, the balance
+						 * factor of the root of this subtree will be neutral
 						 */
 
 					} else if (target.bf == -1) {
@@ -66,7 +68,6 @@ public class AVL {
 						 */
 
 					}
-					target.bf--;
 				}
 			} else {
 				/*
@@ -77,7 +78,7 @@ public class AVL {
 					insert(node, target.left);
 				} else {
 					target.left = node; // we have found an appropriate empty
-										// spot
+					// spot
 					node.bf = 0; // initial BF will be 0
 					node.height = 0;
 					node.parent = target;
@@ -114,32 +115,58 @@ public class AVL {
 					 */
 
 				}
-				target.bf++;
 			}
 			if (newHeight = true) {
-				/*
-				 * walk straight up the tree incrementing the heights and
-				 * checking balance factors of the ancestors
-				 */
-				Node x = target;
-				do{
-					if(x==null){
-						break;
-					}
-					int xRT = (x.right == null) ? -1 : x.right.height;
-					int xLF = (x.left == null) ? -1 : x.left.height;
-					x.bf = xLF - xRT;
-					x.height = (Math.max(xLF, xRT) + 1);
-					if (Math.abs(x.bf)>=2) {
-						System.out.println("OMG, rotate");
-					}
-					x = x.parent;
+				adjustBalanceFactors(target);
+			}
 
-				}while(x!= root);
-				// end ancestor walk
+		}
+	}
+
+	public void adjustBalanceFactors(Node x) {
+		if (newHeight = true) {
+			/*
+			 * walk straight up the tree incrementing the heights and checking
+			 * balance factors of the ancestors
+			 */
+			int xRT = (x.right == null) ? -1 : x.right.height;
+			int xLF = (x.left == null) ? -1 : x.left.height;
+			x.bf = xLF - xRT;
+			x.height = (Math.max(xLF, xRT) + 1);
+			if (Math.abs(x.bf) == 1 && x.parent != null) {
+				adjustBalanceFactors(x.parent);
+			}
+			if (Math.abs(x.bf) == 2) {
+				x = doRotations(x);
+			}
+			// if (newHeight == true) {
+			// x = x.parent;
+			// }
+
+		}
+
+	}
+
+	public Node doRotations(Node x) {
+		// determine which subtree is tallest
+		if (x.bf < 0) {// negative, so we are looking at the right subtree
+			System.out.println("rotate LL on the right side");
+			if (x.right.bf < 0) {// Left Left rotation
+				if (x != root) {
+					x.right.parent = x.parent;
+				} else {
+					x.right = root;
+				}
+				if (x.right.left != null) {
+					x.right.left.parent = x;
+					x.right = x.right.left;
+					x.height = x.height - 2;
+				}
+				newHeight = false;
 
 			}
 		}
+		return x;
 	}
 
 	public Node min(Node node) {
