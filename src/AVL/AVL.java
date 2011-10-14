@@ -123,24 +123,22 @@ public class AVL {
 	}
 
 	public void adjustBalanceFactors(Node x) {
-		
-			int xRT = (x.right == null) ? -1 : x.right.height;
-			int xLF = (x.left == null) ? -1 : x.left.height;
-			x.bf = xLF - xRT;
-			x.height = (Math.max(xLF, xRT) + 1);
 
-			if (Math.abs(x.bf) == 1 && x.parent != null) {
-				/*
-				 * walk straight up the tree incrementing the heights and
-				 * checking balance factors of the ancestors
-				 */
-				adjustBalanceFactors(x.parent);
-			}
-			if (Math.abs(x.bf) == 2) {
-				doRotations(x);
-			}
+		int xRT = (x.right == null) ? -1 : x.right.height;
+		int xLF = (x.left == null) ? -1 : x.left.height;
+		x.bf = xLF - xRT;
+		x.height = (Math.max(xLF, xRT) + 1);
 
-		
+		if (x.parent != null) {
+			/*
+			 * walk straight up the tree incrementing the heights and checking
+			 * balance factors of the ancestors
+			 */
+			adjustBalanceFactors(x.parent);
+		}
+		if (Math.abs(x.bf) == 2) {
+			doRotations(x);
+		}
 
 	}
 
@@ -150,9 +148,8 @@ public class AVL {
 			if (x.right.bf < 0) {// Left Left rotation
 				System.out.println("rotate LL on the right side");
 				rotateLeftLeft(x);
-				
 			}
-		}
+		}newHeight = false;
 	}
 
 	public void rotateLeftLeft(Node x) {
