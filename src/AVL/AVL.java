@@ -123,7 +123,7 @@ public class AVL {
 	}
 
 	public void adjustBalanceFactors(Node x) {
-		if (newHeight = true) {
+		
 			int xRT = (x.right == null) ? -1 : x.right.height;
 			int xLF = (x.left == null) ? -1 : x.left.height;
 			x.bf = xLF - xRT;
@@ -137,48 +137,47 @@ public class AVL {
 				adjustBalanceFactors(x.parent);
 			}
 			if (Math.abs(x.bf) == 2) {
-				x = doRotations(x);
+				doRotations(x);
 			}
 
-		}
+		
 
 	}
 
-	public Node doRotations(Node x) {
+	public void doRotations(Node x) {
 		// determine which subtree is tallest
 		if (x.bf < 0) {// negative, so we are looking at the right subtree
-			System.out.println("rotate LL on the right side");
-			rotateLeftLeft(x);
-		}
-		return x;
-	}
-
-	public Node rotateLeftLeft(Node x) {
-		if (x.right.bf < 0) {// Left Left rotation
-			Node y = x.right;
-			if (y.left != null) {
-				x.right = y.left;
-				y.left.parent = x;
-				y.left = null;
+			if (x.right.bf < 0) {// Left Left rotation
+				System.out.println("rotate LL on the right side");
+				rotateLeftLeft(x);
 				
 			}
-			if (x != root) {
-				y.parent = x.parent;
-			} else {
-				root = y;
-				y.parent = null;
-			}
-			x.parent =y;
-			y.left=x;
-			x.right=null;
-			x.height = x.height - 2;
-			System.out.println("Rotating node "+x.key+" left");
-			newHeight = false;
-			adjustBalanceFactors(x);
-			adjustBalanceFactors(y);
-			return y;
 		}
-		return x;
+	}
+
+	public void rotateLeftLeft(Node x) {
+
+		Node y = x.right;
+		x.right = null;
+		if (y.left != null) {
+			Node z = y.left;
+			y.left = null;
+			z.parent = x;
+			x.right = z;
+		}
+		if (x != root) {
+			y.parent = x.parent;
+		} else {
+			root = y;
+			y.parent = null;
+		}
+		x.parent = y;
+		y.left = x;
+
+		x.height = x.height - 2;
+		System.out.println("Rotating node " + x.key + " left");
+		adjustBalanceFactors(x);
+		newHeight = false;
 	}
 
 	public Node min(Node node) {
