@@ -18,16 +18,17 @@ public class AVL {
 					/*
 					 * is there already a child on the right of the target?
 					 */
-					insert(node, target.right);// retry the insertion on
-					// target's
-					// right child
-				} else {// there is space available for us to insert, perform
-					// all
-					// actions required to complete insertion
+					insert(node, target.right);
+					/*
+					 * retry the insertion on target's right child
+					 */
+				} else {
+					/*
+					 * there is space available for us to insert, perform all
+					 * actions required to complete insertion
+					 */
 					target.right = node;
 					node.parent = target;
-					node.bf = 0;// initial BF will be 0 for any new node
-					node.height = 0;
 					/*
 					 * now we need to determine how or if target (aka the parent
 					 * of the node just inserted) balance factor should be
@@ -52,10 +53,12 @@ public class AVL {
 						System.out.println("Case 2, bf = -1 => -2");
 						newHeight = true; // this should demand a left rotation
 						System.out.println("Left Rotation needed");
+						rotateLeftLeft(target);
+						newHeight = false;
 
 					} else if (target.bf == 0) {// single left-rotation
 						System.out
-								.println("previously balanced subtree is now right-heavy");
+								.println("0-balanced subtree is now right-heavy");
 						System.out.println("Case 3, bf = 0 => -1");
 						newHeight = true;
 						/*
@@ -74,10 +77,8 @@ public class AVL {
 				if (target.left != null) {
 					insert(node, target.left);
 				} else {
-					target.left = node; // we have found an appropriate empty
-					// spot
-					node.bf = 0; // initial BF will be 0
-					node.height = 0;
+					// we have found an appropriate empty spot
+					target.left = node;
 					node.parent = target;
 				}
 				/*
@@ -112,47 +113,51 @@ public class AVL {
 				}
 			}
 			if (newHeight = true) {
-				adjustBalanceFactors(target);
+				bottomUp(target);
 			}
 
 		} else {
 			root = node;
-			node.bf = 0;
-			node.height = 0;
 		}
 	}
 
-	public void adjustBalanceFactors(Node x) {
-
-		int xRT = (x.right == null) ? -1 : x.right.height;
-		int xLF = (x.left == null) ? -1 : x.left.height;
-		x.bf = xLF - xRT;
-		x.height = (Math.max(xLF, xRT) + 1);
-
-		if (x.parent != null) {
+	public void bottomUp(Node x) {
+		x = updateHeightBalance(x);
+		if (Math.abs(x.bf) == 2) {
+			x = rotate(x);
+		}
+		while (x!=root && newHeight == true) {
 			/*
 			 * walk straight up the tree incrementing the heights and checking
 			 * balance factors of the ancestors
 			 */
-			adjustBalanceFactors(x.parent);
-		}
-		if (Math.abs(x.bf) == 2) {
-			doRotations(x);
+			bottomUp(x.parent);
+
 		}
 
 	}
 
-	public void doRotations(Node x) {
+	public Node updateHeightBalance(Node x) {
+		int left = (x.left == null) ? -1 : x.left.height;
+		int right = (x.right == null) ? -1 : x.right.height;
+		x.bf = left - right;
+		x.height = Math.max(left, right) + 1;
+		return x;
+	}
+
+	public Node rotate(Node x) {
 		// determine which subtree is tallest
 		if (x.bf < 0) {// negative, so we are looking at the right subtree
 			if (x.right.bf < 0) {// Left Left rotation
 				System.out.println("rotate LL on the right side");
-				rotateLeftLeft(x);
+				x = rotateLeftLeft(x);
 			}
-		}newHeight = false;
+
+		}
+		return x;
 	}
 
-	public void rotateLeftLeft(Node x) {
+	public Node rotateLeftLeft(Node x) {
 
 		Node y = x.right;
 		x.right = null;
@@ -173,8 +178,9 @@ public class AVL {
 
 		x.height = x.height - 2;
 		System.out.println("Rotating node " + x.key + " left");
-		adjustBalanceFactors(x);
+
 		newHeight = false;
+		return x;
 	}
 
 	public Node min(Node node) {

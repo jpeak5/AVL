@@ -25,8 +25,9 @@ public class AVLops {
 				if (line.length() > 2) {
 					key = Integer.parseInt(line.substring(3));
 					if (cmd.equals("IN")) {//insert
+						System.out.println("\n\n------------\nBegin insert key = "+key+"\n-------------\n");
 						avl.insert(new Node(key), avl.root);
-						System.out.println(cmd +" : "+key);
+						System.out.println(cmd +" : "+key+"\ninsertion done\n-----------------\n");
 					}else if(cmd.equals("SC")){//successor
 						
 						if(avl.search(avl.root, key)!=true){
