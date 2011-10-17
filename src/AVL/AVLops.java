@@ -49,7 +49,7 @@ public class AVLops {
 							}
 						}
 					}else if(cmd.equals("SR")){//search
-						System.out.println(avl.search(avl.root, key)+"     //SR "+key);
+						System.out.println((avl.search(avl.root, key) ? "true" : "false")+"     //SR "+key);
 					}else if(cmd.equals("SE")){//select
 						
 					}else if(cmd.equals("RA")){//rank

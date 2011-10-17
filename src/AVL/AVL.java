@@ -342,7 +342,10 @@ public class AVL {
 		} else if (node.parent.left == node) {// look up and right
 			return node.parent;
 		} else {
-			return successor(node.parent.key);
+			while(node !=node.parent.left){
+				node = node.parent;
+			}
+			return node;
 		}
 
 	}
