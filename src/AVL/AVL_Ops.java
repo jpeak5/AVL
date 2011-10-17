@@ -1,8 +1,10 @@
 package AVL;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
-public class AVLops {
+public class AVL_Ops {
 
 	public static void main(String[] args) {
 		//timer routine sourced from  http://stackoverflow.com/questions/302026/measuring-java-execution-time-memory-usage-and-cpu-load-for-a-code-segment

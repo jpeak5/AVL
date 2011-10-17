@@ -7,6 +7,7 @@ public class Node {
 	public Node parent;
 	public Node right;
 	public Node left;
+	public int size;
 	public String data;
 
 	public Node(int key) {

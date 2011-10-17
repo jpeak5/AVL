@@ -29,6 +29,7 @@ public class AVL {
 					 */
 					target.right = node;
 					node.parent = target;
+					target.size++;
 					System.out.printf(
 							"Inserting node %s as the right child of %s\n",
 							node.key, target.key);
@@ -83,6 +84,7 @@ public class AVL {
 					// we have found an appropriate empty spot
 					target.left = node;
 					node.parent = target;
+					target.size++;
 					System.out.printf(
 							"Inserting node %s as the left child of %s\n",
 							node.key, target.key);
@@ -125,6 +127,7 @@ public class AVL {
 
 		} else {
 			root = node;
+			node.size = 1;
 		}
 	}
 
@@ -148,11 +151,18 @@ public class AVL {
 		System.out.printf("Setting newHeight false from node %s\n", x.key);
 	}
 
+	public void updateSize(Node x){
+		int left = (x.left!=null) ? x.left.size : 0;
+		int right = (x.right!=null) ? x.right.size : 0;
+		x.size = left + right;
+	}
+	
 	public void updateHeightBalance(Node x) {
 		int left = (x.left == null) ? -1 : x.left.height;
 		int right = (x.right == null) ? -1 : x.right.height;
 		x.bf = left - right;
 		x.height = Math.max(left, right) + 1;
+		updateSize(x);
 	}
 
 	public void rotate(Node x) {
@@ -301,6 +311,7 @@ public class AVL {
 		sb.append(node != root ? " parent: " + node.parent.key : "           ");
 		sb.append(" bf: " + node.bf);
 		sb.append(" height: " + node.height);
+		sb.append(" size: "+node.size);
 		sb.append("\n");
 		System.out.print(sb.toString());
 
