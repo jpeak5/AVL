@@ -243,7 +243,8 @@ public class AVL {
 		if (x != root) {
 			System.out.printf("Node %s was not root\n", x.key);
 			y.parent = x.parent;
-			System.out.printf("%s.parent = %s.parent = %s\n", y.key, x.key, y.parent.key);
+			System.out.printf("%s.parent = %s.parent = %s\n", y.key, x.key,
+					y.parent.key);
 
 			if (x.parent.left == x) {
 				y.parent.left = y;
@@ -339,15 +340,13 @@ public class AVL {
 		Node node = get(root, key);
 		if (node.right != null) {// go down and right
 			return min(node.right);
-		} else if (node.parent.left == node) {// look up and right
-			return node.parent;
-		} else {
-			while(node !=node.parent.left){
-				node = node.parent;
-			}
-			return node;
 		}
-
+		Node y = node.parent;
+		while (y != null && node == y.right) {
+			node = y;
+			y = y.parent;
+		}
+		return y;
 	}
 
 	public Node predecessor(int key) {
