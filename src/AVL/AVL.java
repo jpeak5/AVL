@@ -371,43 +371,6 @@ public class AVL {
 	//
 	// }
 
-	private void transplant(Node oroot, Node nroot) {
-		if (oroot.left == nroot) {// right rotation
-			if (oroot == root) {
-				root = nroot;
-				nroot.parent = null;
-			} else {
-				nroot.parent = oroot.parent;
-			}
-			oroot.parent = nroot;
-			if (nroot.right != null) {
-				nroot.right.parent = oroot;
-				oroot.left = nroot.right;
-			}
-			nroot.right = oroot;
-		} else {// left
-			if (oroot == root) {
-				root = nroot;
-				nroot.parent = null;
-			} else {
-				nroot.parent = oroot.parent;
-			}
-			oroot.parent = nroot;
-			if (nroot.left != null) {
-				nroot.left.parent = oroot;
-				oroot.right = nroot.left;
-			}
-			nroot.left = oroot;
-		}
-	}
 
-	private void rRotate(Node node) {
-		System.out.println("Right rotate:\n");
-		transplant(node, node.left);
-	}
 
-	private void lRotate(Node node) {
-		System.out.println("Left Rotate: \n");
-		transplant(node, node.right);
-	}
 }
