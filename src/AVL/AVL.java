@@ -29,6 +29,7 @@ public class AVL {
 					 */
 					target.right = node;
 					node.parent = target;
+					System.out.printf("Inserting node %s as the right child of %s\n", node.key, target.key);
 					/*
 					 * now we need to determine how or if target (aka the parent
 					 * of the node just inserted) balance factor should be
@@ -53,7 +54,7 @@ public class AVL {
 						System.out.println("Case 2, bf = -1 => -2");
 						newHeight = true; // this should demand a left rotation
 						System.out.println("Left Rotation needed");
-						rotateLeftLeft(target);
+						rotateLeft(target);
 						newHeight = false;
 
 					} else if (target.bf == 0) {// single left-rotation
@@ -80,6 +81,7 @@ public class AVL {
 					// we have found an appropriate empty spot
 					target.left = node;
 					node.parent = target;
+					System.out.printf("Inserting node %s as the left child of %s\n", node.key, target.key);
 				}
 				/*
 				 * now we need to determine how or if target (aka the parent of
@@ -113,6 +115,7 @@ public class AVL {
 				}
 			}
 			if (newHeight = true) {
+				System.out.printf("\nCalling bottomUp(%s)\n",target.key);
 				bottomUp(target);
 			}
 
@@ -122,67 +125,126 @@ public class AVL {
 	}
 
 	public void bottomUp(Node x) {
-		x = updateHeightBalance(x);
+		System.out.printf("Calling updateHeightBalance(%s)\n",x.key);
+		updateHeightBalance(x);
 		if (Math.abs(x.bf) == 2) {
-			x = rotate(x);
+			System.out.printf("balanceFactor for Node %s = %d\n",x.key, x.bf);
+			System.out.printf("Calling rotate(%s)\n",x.key);
+			rotate(x);
 		}
-		while (x!=root && newHeight == true) {
+		while (x != root && newHeight == true) {
 			/*
 			 * walk straight up the tree incrementing the heights and checking
 			 * balance factors of the ancestors
 			 */
 			bottomUp(x.parent);
-
 		}
-
+		
+		newHeight=false;
+		System.out.printf("Setting newHeight false from node %s\n",x.key);
 	}
 
-	public Node updateHeightBalance(Node x) {
+	public void updateHeightBalance(Node x) {
 		int left = (x.left == null) ? -1 : x.left.height;
 		int right = (x.right == null) ? -1 : x.right.height;
 		x.bf = left - right;
 		x.height = Math.max(left, right) + 1;
-		return x;
 	}
 
-	public Node rotate(Node x) {
+	public void rotate(Node x) {
+		System.out.println("Begin Rotations for the sub-tree rooted at "+x.key);
 		// determine which subtree is tallest
 		if (x.bf < 0) {// negative, so we are looking at the right subtree
 			if (x.right.bf < 0) {// Left Left rotation
-				System.out.println("rotate LL on the right side");
-				x = rotateLeftLeft(x);
+				System.out.println("Simple Left rotation");
+				rotateLeft(x);
+			}else{
+				System.out.println("Right-Left rotation");
+				rotateRight(x.right);
+				rotateLeft(x);
 			}
-
+		}else{//left subtree
+			if(x.left.bf>0){
+				System.out.println("Simple Right rotation");
+				rotateRight(x);
+			}else{
+				System.out.println("Left-Right rotation");
+				rotateLeft(x.left);
+				rotateRight(x);
+			}
 		}
-		return x;
 	}
 
-	public Node rotateLeftLeft(Node x) {
-
+	public void rotateLeft(Node x) {
+		System.out.printf("rotateLeft(x.%s)\n",x.key);
 		Node y = x.right;
+		System.out.printf("Setting %s.right = null\n",x.key);
 		x.right = null;
 		if (y.left != null) {
+			System.out.println("Node "+y.key+" has a left subtree\n");
 			Node z = y.left;
+			System.out.printf("Setting %s.left = null\n",y.left.key);
 			y.left = null;
+			System.out.printf("Setting %s.parent = %s\n",z.parent.key, x.key);
 			z.parent = x;
+			System.out.printf("Setting %s.right = %s\n",x.right.key, z.key);
 			x.right = z;
 		}
 		if (x != root) {
+			System.out.printf("Node %s was not root\n", x.key);
 			y.parent = x.parent;
+			System.out.printf("%s.parent = %s.parent\n",y.key, x.key);
+			y.parent.left = y;
+			System.out.printf("%s.parent.left = %s //identity\n", y.parent.left.key, y.key);
 		} else {
 			root = y;
+			System.out.printf("%s is now root\n", y.key);
 			y.parent = null;
+			System.out.printf("%s.parent set to null\n", y.key);
 		}
 		x.parent = y;
+		System.out.printf("%s.parent = %s\n",x.key, y.key);
 		y.left = x;
+		System.out.printf("%s.left = %s\n", y.key, x.key);
 
-		x.height = x.height - 2;
-		System.out.println("Rotating node " + x.key + " left");
-
-		newHeight = false;
-		return x;
+		updateHeightBalance(x);
+		
 	}
 
+	public void rotateRight(Node x) {
+		System.out.printf("rotateRight(x.%s)\n",x.key);
+		Node y = x.left;
+		System.out.printf("Setting %s.left = null\n",x.key);
+		x.left = null;
+		if (y.right != null) {
+			System.out.println("Node "+y.key+" has a right subtree\n");
+			Node z = y.right;
+			System.out.printf("Setting %s.right = null\n",y.left.key);
+			y.right = null;
+			System.out.printf("Setting %s.parent = %s\n",z.parent.key, x.key);
+			z.parent = x;
+			System.out.printf("Setting %s.left = %s\n",x.right.key, z.key);
+			x.left = z;
+		}
+		if (x != root) {
+			System.out.printf("Node %s was not root\n", x.key);
+			y.parent = x.parent;
+			System.out.printf("%s.parent = %s.parent\n",y.key, x.key);
+			y.parent.right=y;
+			System.out.printf("%s.parent.right = %s //identity\n", y.parent.right.key, y.key);
+		} else {
+			root = y;
+			System.out.printf("%s is now root\n", y.key);
+			y.parent = null;
+			System.out.printf("%s.parent set to null\n", y.key);
+		}
+		x.parent = y;
+		System.out.printf("%s.parent = %s\n",x.key, y.key);
+		y.right = x;
+		System.out.printf("%s.right = %s\n", y.key, x.key);
+		x.height = x.height - 2;
+	}
+	
 	public Node min(Node node) {
 		if (node.left != null) {
 			return min(node.left);
@@ -204,13 +266,16 @@ public class AVL {
 		if (node.left != null) {
 			inorder(node.left);
 		}
-		System.out.print(node.key + "(bf: " + node.bf + ")");
-		if (node.left != null)
-			System.out.print("(left: " + node.left.key + ")");
-		if (node.right != null)
-			System.out.print("(right: " + node.right.key + ")");
-		System.out.print("(height: " + node.height + ")");
-		System.out.print("\n");
+		StringBuffer sb = new StringBuffer();
+		sb.append(node.key);
+		sb.append((node==root) ? ("<--ROOT-->") : "          ");
+		sb.append((node.left != null) ? " left:  " + node.left.key : "           ");
+		sb.append((node.right != null) ? " right: " + node.right.key :"           ");
+		sb.append(" bf: " + node.bf);
+		sb.append(" height: " + node.height);
+		sb.append("\n");
+		System.out.print(sb.toString());
+		
 		if (node.right != null) {
 			inorder(node.right);
 		}
