@@ -139,6 +139,7 @@ public class AVL {
 			System.out.printf("Calling rotate(%s)\n", x.key);
 			rotate(x);
 		}
+		updateSize(x);
 		while (x != root && newHeight == true) {
 			/*
 			 * walk straight up the tree incrementing the heights and checking
@@ -152,9 +153,12 @@ public class AVL {
 	}
 
 	public void updateSize(Node x){
+		while(x.parent!=null){
 		int left = (x.left!=null) ? x.left.size : 0;
 		int right = (x.right!=null) ? x.right.size : 0;
 		x.size = left + right;
+		x= x.parent;
+		}
 	}
 	
 	public void updateHeightBalance(Node x) {
@@ -162,7 +166,6 @@ public class AVL {
 		int right = (x.right == null) ? -1 : x.right.height;
 		x.bf = left - right;
 		x.height = Math.max(left, right) + 1;
-		updateSize(x);
 	}
 
 	public void rotate(Node x) {

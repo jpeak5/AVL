@@ -14,6 +14,7 @@ public class Node {
 		this.key = key;
 		this.height=0;
 		this.bf=0;
+		this.size=1;
 	}
 	
 
