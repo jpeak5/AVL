@@ -306,6 +306,7 @@ public class AVL {
 			inorder(node.left);
 		}
 		StringBuffer sb = new StringBuffer();
+		sb.append(rank(node.key)+" ");
 		sb.append(node.key);
 		sb.append((node == root) ? ("<--ROOT-->") : "          ");
 		sb.append((node.left != null) ? " left:  " + node.left.key
@@ -365,7 +366,7 @@ public class AVL {
 				rank += node.left.size + 1;
 				node = predecessor(min(node.left).key);
 			}
-			else if (pr.left == null) {
+			else if (pr !=null &&pr.left == null) {
 				node = pr;
 				rank++;
 			}else{
