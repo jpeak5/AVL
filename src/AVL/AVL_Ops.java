@@ -53,9 +53,11 @@ public class AVL_Ops {
 					}else if(cmd.equals("SR")){//search
 						System.out.println((avl.search(avl.root, key) ? "true" : "false")+"     //SR "+key);
 					}else if(cmd.equals("SE")){//select
-						
+						Node s = avl.select(avl.root, key,0);
+						System.out.println((s!=null ? s.key : "index out of bounds")+"     //SE "+key);
 					}else if(cmd.equals("RA")){//rank
-						
+						int rank = avl.rank(key);
+						System.out.println(rank+"	//RA"+key);
 					}
 				}else if(cmd.equals("MI")){//min
 					System.out.println(avl.min(avl.root).key + "     //Min");

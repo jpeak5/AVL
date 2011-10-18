@@ -123,6 +123,7 @@ public class AVL {
 			if (newHeight = true) {
 				System.out.printf("\nCalling bottomUp(%s)\n", target.key);
 				bottomUp(target);
+				updateSize(target);
 			}
 
 		} else {
@@ -139,7 +140,7 @@ public class AVL {
 			System.out.printf("Calling rotate(%s)\n", x.key);
 			rotate(x);
 		}
-		updateSize(x);
+
 		while (x != root && newHeight == true) {
 			/*
 			 * walk straight up the tree incrementing the heights and checking
@@ -152,15 +153,15 @@ public class AVL {
 		System.out.printf("Setting newHeight false from node %s\n", x.key);
 	}
 
-	public void updateSize(Node x){
-		while(x.parent!=null){
-		int left = (x.left!=null) ? x.left.size : 0;
-		int right = (x.right!=null) ? x.right.size : 0;
-		x.size = left + right;
-		x= x.parent;
-		}
+	public void updateSize(Node x) {
+		do {
+			int left = (x.left != null) ? x.left.size : 0;
+			int right = (x.right != null) ? x.right.size : 0;
+			x.size = 1 + left + right;
+			x = x.parent;
+		} while (x != null);
 	}
-	
+
 	public void updateHeightBalance(Node x) {
 		int left = (x.left == null) ? -1 : x.left.height;
 		int right = (x.right == null) ? -1 : x.right.height;
@@ -314,7 +315,7 @@ public class AVL {
 		sb.append(node != root ? " parent: " + node.parent.key : "           ");
 		sb.append(" bf: " + node.bf);
 		sb.append(" height: " + node.height);
-		sb.append(" size: "+node.size);
+		sb.append(" size: " + node.size);
 		sb.append("\n");
 		System.out.print(sb.toString());
 
@@ -334,6 +335,46 @@ public class AVL {
 			}
 		}
 		return false;
+	}
+
+	public Node select(Node node, int i, int r) {
+		if (i <= root.size) {
+			// if (node.size + r == i) {
+			// return node;
+			// }
+			if (node.left != null && node.left.size + r >= i) {// look
+				// left
+				return select(node.left, i, r);
+			} else if ((node.left != null ? node.left.size : 0) + r + 1 < i) {
+				return select(node.right, i, 1 + r + node.left.size);
+			} else {
+				return node;
+			}
+		} else {
+			return null;// index i out of bounds
+		}
+	}
+
+	public int rank(int key) {
+		Node min = min(root);
+		Node node = get(root, key);
+		int rank = 0;
+		while (node != null) {
+			Node pr = predecessor(node.key);
+			if(node.left!=null){
+				rank += node.left.size + 1;
+				node = predecessor(min(node.left).key);
+			}
+			else if (pr.left == null) {
+				node = pr;
+				rank++;
+			}else{
+				node = pr;
+				rank++;
+			}
+
+		}
+		return rank;
 	}
 
 	private Node get(Node node, int key) {// utility method to get a reference
@@ -367,14 +408,13 @@ public class AVL {
 		Node node = get(root, key);
 		if (node.left != null) {// go down and right
 			return max(node.left);
-		} else if (node.parent != null) {
-			if (node.parent.right == node) {// look up and left
-				return node.parent;
-			} else {
-				return predecessor(node.parent.key);
-			}
 		}
-		return node = null;
+		Node y = node.parent;
+		while (y != null && node == y.left) {
+			node = y;
+			y = y.parent;
+		}
+		return y;
 	}
 
 	//
@@ -384,7 +424,5 @@ public class AVL {
 	// public void rank(){
 	//
 	// }
-
-
 
 }
