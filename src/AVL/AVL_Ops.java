@@ -1,5 +1,6 @@
 package AVL;
 
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,6 +69,9 @@ public class AVL_Ops {
 					avl.inorder(avl.root);
 				}
 				sb.append(line);
+				BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"));
+				bw.write(sb.toString());
+				bw.close();
 			}
 			
 			bf.close();
