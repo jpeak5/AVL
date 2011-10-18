@@ -8,11 +8,12 @@ import java.io.IOException;
 
 public class AVL_Ops {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		//timer routine sourced from  http://stackoverflow.com/questions/302026/measuring-java-execution-time-memory-usage-and-cpu-load-for-a-code-segment
 		long start = System.nanoTime(); // requires java 1.5
 		
 		
+		StringBuffer output = new StringBuffer();
 		AVL avl = new AVL();
 		StringBuffer debug = new StringBuffer();
 		try {
@@ -29,55 +30,48 @@ public class AVL_Ops {
 				if (line.length() > 2) {
 					key = Integer.parseInt(line.substring(3));
 					if (cmd.equals("IN")) {//insert
-						System.out.println("\n\n------------\nBegin insert key = "+key+"\n-------------\n");
 						avl.insert(new Node(key), avl.root);
-						System.out.println(cmd +" : "+key+"\ninsertion done\n-----------------\n");
 					}else if(cmd.equals("SC")){//successor
-						
 						if(avl.search(avl.root, key)!=true){
-							System.out.println("Error: no such key, hence, no successor");
+							output.append("Error: no such key, hence, no successor\n");
 						}
 						else{
-							System.out.println(avl.successor(key).key+"     //SC "+ key);
+							output.append(avl.successor(key).key+"\n");
 						}
 					}else if(cmd.equals("PR")){//predecessor
 						if(avl.search(avl.root, key)!=true){
-							System.out.println("Error: no such key, hence, no successor");
+							output.append("Error: no such key, hence, no predecessor\n");
 						}
 						else{
 							Node p = avl.predecessor(key);
 							if(p!=null){
-								System.out.println(avl.predecessor(key).key+"     //PR "+ key);
+								output.append((avl.predecessor(key).key+"\n"));
 							}else{
-								System.out.println("ERROR: Searching for predecessor to min     //PR "+ key);
+								output.append(("ERROR: Searching for predecessor to min\n"));
 							}
 						}
 					}else if(cmd.equals("SR")){//search
-						System.out.println((avl.search(avl.root, key) ? "true" : "false")+"     //SR "+key);
+						output.append((avl.search(avl.root, key) ? "true" : "false")+"\n");
 					}else if(cmd.equals("SE")){//select
 						Node s = avl.select(avl.root, key,0);
-						System.out.println((s!=null ? s.key : "index out of bounds")+"     //SE "+key);
+						output.append(s!=null ? s.key+"\n" : "index out of bounds\n");
 					}else if(cmd.equals("RA")){//rank
 						int rank = avl.rank(key);
-						System.out.println(rank+"	//RA"+key);
+						output.append(rank+"\n");
 					}
 				}else if(cmd.equals("MI")){//min
-					System.out.println(avl.min(avl.root).key + "     //Min");
+					output.append(avl.min(avl.root).key+"\n");
 				}else if(cmd.equals("MA")){//max
-					System.out.println(avl.max(avl.root).key + "     //Max");
+					output.append(avl.max(avl.root).key+"\n");
 				}else if(cmd.equals("TR")){//traverse inorder
-					System.out.println("inorder:\n");
-					avl.inorder(avl.root);
+					output = (avl.inorder(avl.root, output));
+					
 				}
 				sb.append(line);
-				BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"));
-				bw.write(sb.toString());
-				bw.close();
+				
 			}
 			
 			bf.close();
-			// Segment to monitor
-			System.out.println("\n"+(System.nanoTime() - start) / 1000 +" microseconds");
 		} catch (ArrayIndexOutOfBoundsException e) {
 
 			System.out.println("Usage: be sure to supply a filename\n");
@@ -88,6 +82,13 @@ public class AVL_Ops {
 		}
 
 		
+		// Segment to monitor
+		output.append("\n"+(System.nanoTime() - start) / 1000 +" microseconds");
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"));
+		bw.write(output.toString());
+		
+		bw.close();
 	}
 
 }

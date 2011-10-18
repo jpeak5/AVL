@@ -102,7 +102,6 @@ public class AVL {
 				}
 			}
 			if (newHeight = true) {
-				System.out.printf("\nCalling bottomUp(%s)\n", target.key);
 				bottomUp(target);
 				updateSize(target);
 			}
@@ -114,7 +113,7 @@ public class AVL {
 	}
 
 	public void bottomUp(Node x) {
-		
+
 		updateHeightBalance(x);
 		if (Math.abs(x.bf) == 2) {
 			rotate(x);
@@ -166,7 +165,7 @@ public class AVL {
 		}
 	}
 
-	public void rotateLeft(Node x) {	
+	public void rotateLeft(Node x) {
 		Node y = x.right;
 		x.right = null;
 		if (y.left != null) {
@@ -191,7 +190,7 @@ public class AVL {
 		updateHeightBalance(x);
 	}
 
-	public void rotateRight(Node x) {	
+	public void rotateRight(Node x) {
 		Node y = x.left;
 		x.left = null;
 		if (y.right != null) {
@@ -233,28 +232,15 @@ public class AVL {
 	}
 
 	// inorder walk of the tree, checking for null children
-	public void inorder(Node node) {
+	public StringBuffer inorder(Node node, StringBuffer output) {
 		if (node.left != null) {
-			inorder(node.left);
+			inorder(node.left, output);
 		}
-		StringBuffer sb = new StringBuffer();
-		sb.append(rank(node.key) + " ");
-		sb.append(node.key);
-		sb.append((node == root) ? ("<--ROOT-->") : "          ");
-		sb.append((node.left != null) ? " left:  " + node.left.key
-				: "           ");
-		sb.append((node.right != null) ? " right: " + node.right.key
-				: "           ");
-		sb.append(node != root ? " parent: " + node.parent.key : "           ");
-		sb.append(" bf: " + node.bf);
-		sb.append(" height: " + node.height);
-		sb.append(" size: " + node.size);
-		sb.append("\n");
-		System.out.print(sb.toString());
-
+		output.append(node.key+"\n");
 		if (node.right != null) {
-			inorder(node.right);
+			inorder(node.right, output);
 		}
+		return output;
 	}
 
 	public boolean search(Node node, int key) {
@@ -345,6 +331,5 @@ public class AVL {
 		}
 		return y;
 	}
-
 
 }
